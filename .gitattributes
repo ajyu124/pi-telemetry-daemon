@@ -1,0 +1,6 @@
+# Always store and check out text files with Linux line endings (LF).
+#
+# Why this matters: Windows uses CRLF line endings. If Git on Windows converts
+# the shell scripts in scripts/ to CRLF, Linux refuses to run them and prints
+# confusing errors such as "$'\r': command not found". This file prevents that.
+* text=auto eol=lf

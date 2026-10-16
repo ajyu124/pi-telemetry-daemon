@@ -1,0 +1,40 @@
+# =============================================================================
+# telemetry-daemon.service
+#
+# WHAT IS THIS?
+#   A systemd "unit file". systemd is the program on Linux that starts
+#   background services at boot and restarts them if they crash. This file
+#   tells systemd how to run the telemetry daemon on a Raspberry Pi.
+#
+# STATUS
+#   This is a template for when the Raspberry Pi hardware arrives. It has NOT
+#   been run on a Pi yet. Follow docs/RASPBERRY_PI_SETUP.md, which explains
+#   the three values below that you must edit first.
+#
+# YOU DO NOT NEED THIS FILE to run the project on a laptop.
+# =============================================================================
+
+[Unit]
+Description=Sensor telemetry daemon (50 Hz UDP stream with SQLite recording)
+# Wait until the network is up, because the daemon sends UDP packets.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# EDIT 1: the Linux user that owns the project folder.
+User=pi
+
+# EDIT 2: the folder the project was built in. The database file is created here.
+WorkingDirectory=/home/pi/pi-telemetry-daemon
+
+# EDIT 3: replace 192.168.1.50 with the IP address of the computer running
+# tools/telemetry_viewer.py.
+ExecStart=/home/pi/pi-telemetry-daemon/build/telemetry_daemon --sensor bme280 --host 192.168.1.50 --port 5005 --quiet
+
+# If the daemon exits with an error, start it again after 2 seconds.
+Restart=on-failure
+RestartSec=2
+
+[Install]
+# Start automatically at boot.
+WantedBy=multi-user.target
